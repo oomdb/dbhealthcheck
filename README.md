@@ -4,4 +4,7 @@
 # examples
 
 
+示例图片：
+![image](https://github.com/DragonWujj/dbhealthcheck/blob/master/examples.png)
+
 
