@@ -5,4 +5,4 @@
 解决办法：<br>
 a、升级oracle数据库版本到12.1.0.2+（此方法基本不可用，你懂的，嘿嘿）。<br>
 b、创建个类型转换函数STRAGG，转换为clob数据类型。 详见脚本：<br>
-https://github.com/DragonWujj/dbhealthcheck/edit/master/Problems/listagg/ORA-01489 result of string concatenation is too long  (listagg).sql <br>
+
