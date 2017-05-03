@@ -1,6 +1,3 @@
 # dbhealthcheck
-A SQL Scripts to check oracle
-
-
-Examples
+  A SQL Scripts to check oracle
 
