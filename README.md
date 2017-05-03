@@ -6,12 +6,12 @@
   
 # examples
 ## 1、准备工作
-   脚本中遇到的问题汇总。
-   #### <1>、Listagg拼接字符串时，报ORA-01489: result of string concatenation is too long 错误
-             这是oracle11g版本的一个BUG，在12.1.0.2版本中得到修复。
-             解决办法：
-                 a、
-                 b、
+脚本中遇到的问题汇总。
+#### <1>、Listagg拼接字符串时，报ORA-01489: result of string concatenation is too long 错误
+这是oracle11g版本的一个BUG，在12.1.0.2版本中得到修复。
+解决办法：
+    a、升级oracle数据库版本到12.1.0.2+（此方法基本不可用，你懂的，嘿嘿）
+    b、
      
 
 
