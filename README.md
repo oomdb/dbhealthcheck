@@ -1,5 +1,5 @@
 # dbhealthcheck
-  A SQL Scripts to check oracle db.
+  A SQL Scripts to check oracle db health.
   
   
 #### PS：这只是个脚本的DEMO,有需要的可以自己对脚本进行扩展，我后期也会慢慢进行扩展，逐渐将其丰富起来，有问题和好的建议，也请欢迎咨询我。
