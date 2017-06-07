@@ -1,1 +1,91 @@
+用SQL语句直接查询告警日志的内容，即创建一张包含Alert.log内容的表或视图,此方法支持RAC环境。
+
+DECLARE
+  PATH_BDUMP VARCHAR2(4000);
+  NAME_ALERT VARCHAR2(4000);
+  INS_NAME   VARCHAR2(200);
+BEGIN
+
+  SELECT VALUE
+    INTO PATH_BDUMP
+    FROM SYS.V_$PARAMETER
+   WHERE NAME = 'background_dump_dest';
+  SELECT 'alert_' || VALUE || '.log'
+    INTO NAME_ALERT
+    FROM SYS.V_$PARAMETER
+   WHERE NAME = 'instance_name';
+
+  SELECT VALUE
+    INTO INS_NAME
+    FROM SYS.V_$PARAMETER
+   WHERE NAME = 'instance_number';
+
+  IF INS_NAME = '0' THEN
+    INS_NAME := '';
+  END IF;
+
+  EXECUTE IMMEDIATE 'create or replace directory bdump' || INS_NAME ||
+                    ' as ''' || PATH_BDUMP || '''';
+  EXECUTE IMMEDIATE 'create table ALERT_LOG_VIEW' || INS_NAME ||
+                    '  (MSG_line varchar2(4000)   ) ' ||
+                    ' organization external ' || ' (type oracle_loader ' ||
+                    ' default directory bdump' || INS_NAME ||
+                    ' access parameters ( ' ||
+                    ' records delimited by newline ' || ' nobadfile ' ||
+                    ' nologfile ' || ' nodiscardfile ' || ' skip 0 ' ||
+                    ' READSIZE 10485760 ' || ' FIELDS LDRTRIM ' ||
+                    ' REJECT ROWS WITH ALL NULL FIELDS ' ||
+                    ' (MSG_LINE (1:1000) CHAR(1000)) ' || ' ) ' ||
+                    ' location (''' || NAME_ALERT || ''') )' ||
+                    ' reject limit unlimited ' ||
+                    ' noparallel nomonitoring ';
+
+END;
+/
+
+
+
+col lineno noprint
+col ora_error noprint
+col msg_line format a132
+set pages 0 lines 300 trimspool on trim on
+alter session set nls_date_language = 'american';
+alter session set nls_date_format='dd/mm/yyyy hh24:mi:ss';
+alter session set sql_trace=false;
+break on thedate
+prompt
+prompt ERROR IN ALERT LOG FILE - LAST 3 DAYS
+prompt =====================================
+SELECT "LINENO", "THEDATE", "ORA_ERROR", "MSG_LINE"
+  FROM (SELECT *
+          FROM (SELECT LINENO,
+                       MSG_LINE,
+                       THEDATE,
+                       MAX(CASE
+                             WHEN (ORA_ERROR LIKE 'ORA-%' OR
+                                  ORA_ERROR LIKE 'PLS-%') THEN
+                              RTRIM(SUBSTR(ORA_ERROR, 1, INSTR(ORA_ERROR, ' ') - 1),
+                                    ':')
+                             ELSE
+                              NULL
+                           END) OVER(PARTITION BY THEDATE) ORA_ERROR
+                  FROM (SELECT LINENO,
+                               MSG_LINE,
+                               MAX(THEDATE) OVER(ORDER BY LINENO) THEDATE,
+                               LEAD(MSG_LINE) OVER(ORDER BY LINENO) ORA_ERROR
+                          FROM (SELECT ROWNUM LINENO,
+                                       SUBSTR(MSG_LINE, 1, 132) MSG_LINE,
+                                       CASE
+                                         WHEN MSG_LINE LIKE
+                                              '___ ___ __ __:__:__ ____' THEN
+                                          TO_DATE(MSG_LINE,
+                                                  'Dy Mon DD hh24:mi:ss yyyy')
+                                         ELSE
+                                          NULL
+                                       END THEDATE
+                                  FROM ALERT_LOG_VIEW1))))
+ WHERE ORA_ERROR IS NOT NULL
+   AND THEDATE >= (TRUNC(SYSDATE) - 3)
+ ORDER BY THEDATE;
+
 
