@@ -12,7 +12,9 @@
 解决办法：<br>
   a、升级oracle数据库版本到12.1.0.2+，因为11g的varchar2最大支持4K,12C扩展到了32k。（此方法基本不可用，你懂的，嘿嘿）。<br>
   b、创建个类型转换函数STRAGG，转换为clob数据类型。详见脚本：[Listagg](https://github.com/DragonWujj/dbhealthcheck/blob/master/Problems/listagg/ORA-01489%20result%20of%20string%20concatenation%20is%20too%20long%20%20(listagg).sql) <br>
-     
+
+#### <2>、外部表访问数据库Alert日志
+详见脚本：[alertlog](https://github.com/DragonWujj/dbhealthcheck/blob/master/Problems/Alert%20log/alertlog) <br>
 
 
 ## 2、执行脚本
