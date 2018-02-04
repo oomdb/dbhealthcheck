@@ -44,6 +44,3 @@ SQL> @db_health_check.sql
 ## 4、联系方式
 ##### 电子邮箱：997702411@qq.com
 ##### QQ号：997702411（水平欠佳）
-##### 微信号：
-![image](https://github.com/DragonWujj/dbhealthcheck/blob/master/weixin.jpg)
-
